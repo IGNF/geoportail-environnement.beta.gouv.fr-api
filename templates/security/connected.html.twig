@@ -1,0 +1,20 @@
+{% block body %}
+
+<h1>Bienvenue sur Foreg</h1>
+<p>Cette page sera au design DSFR</p>
+<hr>
+{% if app.user %}
+    <p>Bonjour {{ app.user.email }}</p>
+    <p>Vous êtes connecté sur le site foreg, vous pouvez fermer cet onglet</p>
+{% else %}
+    <p>Vous n'êtes pas connecté</p>
+{% endif %}
+
+{% endblock %}
+
+
+{% block javascripts %}
+<script>
+console.error('récupère les tokens jwt et refresh');
+</script>
+{% endblock %}
