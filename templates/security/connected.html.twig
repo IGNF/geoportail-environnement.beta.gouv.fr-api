@@ -6,6 +6,7 @@
 {% if app.user %}
     <p>Bonjour {{ app.user.email }}</p>
     <p>Vous êtes connecté sur le site foreg, vous pouvez fermer cet onglet</p>
+    <p>{{ app.user|serialize(format = 'json') }}</p>
 {% else %}
     <p>Vous n'êtes pas connecté</p>
 {% endif %}
@@ -16,5 +17,19 @@
 {% block javascripts %}
 <script>
 console.error('récupère les tokens jwt et refresh');
+{% if app.user %}
+const compteur = 10;
+const url = "{{ url('app_session_token')}}";
+
+const request = new XMLHttpRequest();
+request.open('GET', url);
+request.onload = () => {
+    const response = JSON.parse(request.response);
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('refreshToken', response.refresh_token);
+};
+request.send();
+
+{% endif %}
 </script>
 {% endblock %}

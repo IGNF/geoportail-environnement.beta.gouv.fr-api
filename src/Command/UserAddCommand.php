@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
@@ -48,7 +49,7 @@ class UserAddCommand extends Command
         $user = new User();
         $user->setEmail($input->getArgument('email'));
         $user->setPassword($this->passwordHasher->hashPassword($user,$input->getArgument('password')));
-
+        $user->setCreatedAt(new DateTimeImmutable());
 
         $this->repository->persist($user, true);
         
