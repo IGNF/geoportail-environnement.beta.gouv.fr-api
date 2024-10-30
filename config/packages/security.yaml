@@ -14,6 +14,35 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        api_token_refresh:
+            pattern: ^/api/token/refresh$
+            stateless: true
+            # user_checker: user_checker_service_id
+            refresh_jwt: ~
+
+        api_login:
+            pattern: ^/api/login$
+            stateless: true
+            json_login:
+                check_path: /api/login # or api_login_check as defined in config/routes.yaml
+                # success_handler: lexik_jwt_authentication.handler.authentication_success
+                success_handler: app.lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                # failure_handler: app.lexik_jwt_authentication.handler.authentication_failure
+                provider: app_user_provider
+            # refresh_jwt:
+            #     check_path: /api/token/refresh
+
+        api:
+            pattern:   ^/api
+            stateless: true
+            # jwt: ~
+            jwt: 
+                provider: app_user_provider
+                authenticator: app.jwt_authenticator
+            # user_checker: App\Security\UserChecker
+
         main:
             lazy: true
             provider: app_user_provider
@@ -39,6 +68,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/api/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/token/refresh$, roles: PUBLIC_ACCESS }
+        - { path: ^/api, methods: [POST, PUT, PATCH, DELETE], roles: IS_AUTHENTICATED_FULLY} 
+        - { path: ^/, roles: PUBLIC_ACCESS }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

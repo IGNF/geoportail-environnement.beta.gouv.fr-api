@@ -30,3 +30,20 @@ services:
         public: true
         arguments: ['@serializer.mapping.class_metadata_factory', '@serializer.name_converter.camel_case_to_snake_case']
         # tags: [serializer.normalizer]
+
+    app.jwt_authenticator:
+        class: App\Security\AppJWTAuthenticator
+        parent: lexik_jwt_authentication.security.jwt_authenticator
+        # arguments: ['@security.firewall.map']
+        arguments: ['@security.access_map']
+    
+    app.lexik_jwt_authentication.handler.authentication_success:
+        class: App\Security\AppAuthenticationSuccessHandler
+        # parent: lexik_jwt_authentication.handler.authentication_success
+        arguments: 
+        - '@lexik_jwt_authentication.jwt_manager'
+        - '@event_dispatcher'
+        - '@doctrine'
+        - []
+        tags:
+        - { name: monolog.logger, channel: security }

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Symfony\Component\Serializer\Attribute\Ignore;
@@ -41,6 +43,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     private ?\DateTimeImmutable $createdAt = null;
+
+    /**
+     * @var Collection<int, Foret>
+     */
+    #[ORM\OneToMany(targetEntity: Foret::class, mappedBy: 'owner')]
+    private Collection $forets;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $lastLogin = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->lastLogin = new \DateTimeImmutable();
+        $this->forets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -125,6 +143,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Foret>
+     */
+    public function getForets(): Collection
+    {
+        return $this->forets;
+    }
+
+    public function addForet(Foret $foret): static
+    {
+        if (!$this->forets->contains($foret)) {
+            $this->forets->add($foret);
+            $foret->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeForet(Foret $foret): static
+    {
+        if ($this->forets->removeElement($foret)) {
+            // set the owning side to null (unless already changed)
+            if ($foret->getOwner() === $this) {
+                $foret->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLastLogin(): ?\DateTimeImmutable
+    {
+        return $this->lastLogin;
+    }
+
+    public function setLastLogin(\DateTimeImmutable $lastLogin): static
+    {
+        $this->lastLogin = $lastLogin;
 
         return $this;
     }

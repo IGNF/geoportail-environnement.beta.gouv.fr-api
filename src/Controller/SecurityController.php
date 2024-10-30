@@ -35,6 +35,12 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    #[Route(path: '/api/login', name: 'api_login')]
+    public function apiLogin(): Response
+    {
+        return new Response('ok');
+    }
+
     #[Route(path: '/vous-etes-connecte', name: 'app_connected')]
     public function connected():Response
     {
@@ -42,7 +48,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * cette route permet de recevoir les tokens si on est connectés sur le site via une session (prof/eleves ou admin)
+     * cette route permet de recevoir les tokens lorsqu'on est connectés sur le site via une session
      */
     #[Route(path: '/session-token', name: 'app_session_token')]
     public function sessionToken(JWTTokenManagerInterface $jwtManager ): Response

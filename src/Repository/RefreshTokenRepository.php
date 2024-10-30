@@ -8,6 +8,7 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Gesdinet\JWTRefreshTokenBundle\Doctrine\RefreshTokenRepositoryInterface;
 
 /**
  * @method RefreshToken|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,11 +16,28 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @method RefreshToken[]    findAll()
  * @method RefreshToken[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RefreshTokenRepository extends ServiceEntityRepository
+class RefreshTokenRepository extends ServiceEntityRepository implements RefreshTokenRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, RefreshToken::class);
+    }
+
+    /**
+     * @param \DateTimeInterface|null $datetime
+     *
+     * @return RefreshToken[]
+     */
+    public function findInvalid($datetime = null)
+    {
+        $datetime = (null === $datetime) ? new \DateTime() : $datetime;
+
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere('valid < :datetime')
+            ->setParameter('datetime', $datetime)
+        ;
+
+        return $qb->getQuery()->execute();
     }
 
     /**

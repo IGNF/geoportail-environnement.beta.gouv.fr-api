@@ -18,14 +18,10 @@ class UserNormalizer implements NormalizerInterface
     {
         /** @var User $user */
         $data = [];
-        // if($object instanceof User){
-            $data['email'] = $user->getEmail();
-            $data['created_at'] = $user->getCreatedAt()->format(\DateTimeInterface::W3C);
-        // }
-        // $data = $this->normalizer->normalize($object, $format, $context);
-
-        // TODO: add, edit, or delete some data
-
+        $data['email'] = $user->getEmail();
+        $data['created_at'] = $user->getCreatedAt()->format(\DateTimeInterface::W3C);
+        $data['last_login'] = $user->getLastLogin()->format(\DateTimeInterface::W3C);
+        
         return $data;
     }
 

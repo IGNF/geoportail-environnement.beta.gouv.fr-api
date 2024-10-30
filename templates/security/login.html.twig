@@ -4,7 +4,30 @@
 
 {% block body %}
 <h1>Connexion à foreg</h1>
-<p>Ce formulaire sera remplacé par celui ultérieurement de la GPF, il sert à simuler son fonctionnement</p>
+<p>Ce formulaire sera remplacé ultérieurement par celui de la GPF, il sert à simuler son fonctionnement</p>
+<p>Les utilisateurs disponibles : </p>
+<table>
+    <tr>
+        <th>Login</th>
+        <th>Password</th>
+    </tr>
+    <tr>
+        <td>david@ign</td>
+        <td>david</td>
+    </tr>
+    <tr>
+        <td>clement@ign</td>
+        <td>clement</td>
+    </tr>
+    <tr>
+        <td>manu@ign</td>
+        <td>manu</td>
+    </tr>
+    <tr>
+        <td>daniel@ign</td>
+        <td>daniel</td>
+    </tr>
+</table>
     <form method="post">
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -12,7 +35,8 @@
 
         {% if app.user %}
             <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                <p>You are logged in as {{ app.user.userIdentifier }}</p>
+                <p> <a href="{{ path('app_logout') }}">Logout</a></p>
             </div>
         {% endif %}
 
