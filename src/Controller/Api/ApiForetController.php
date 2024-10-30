@@ -3,10 +3,11 @@
 namespace App\Controller\Api;
 
 use App\Repository\ForetRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ApiForetController extends ApiAbstractController
 {
@@ -18,7 +19,7 @@ class ApiForetController extends ApiAbstractController
     }
 
     #[Route('/api/forets', name: 'api_foret_get', methods:["GET"])]
-    public function get(): Response
+    public function get(SerializerInterface $serializer): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -27,30 +28,37 @@ class ApiForetController extends ApiAbstractController
             return $this->returnResponse('Not connected', Response::HTTP_UNAUTHORIZED);
         }
 
-        return new JsonResponse();
+        $forets = $user->getForets();
+        $json = $serializer->serialize($forets, 'json');
+
+        return new Response($json, Response::HTTP_OK, array(
+            'Content-Type' => 'application/json',
+        ));
     }
 
     #[Route('/api/forets/{id}', name: 'api_foret_getone', methods:["GET"])]
-    public function getOne($id): Response
+    public function getOne(int $id, SerializerInterface $serializer): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-
         if(!$user){
             return $this->returnResponse('Not connected', Response::HTTP_UNAUTHORIZED);
         }
 
         $foret = $this->foretRepository->find($id);
-        
         if(!$foret){
             return $this->returnResponse('Not found', Response::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse();
+        $json = $serializer->serialize($foret, 'json');
+
+        return new Response($json, Response::HTTP_OK, array(
+            'Content-Type' => 'application/json',
+        ));
     }
 
-    #[Route('/api/forets/', name: 'api_foret_getone', methods:["POST"])]
-    public function patch(): Response
+    #[Route('/api/forets/', name: 'api_foret_post', methods:["POST"])]
+    public function post(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -63,7 +71,7 @@ class ApiForetController extends ApiAbstractController
     }
 
     #[Route('/api/forets/{id}', name: 'api_foret_patch', methods:["PATCH"])]
-    public function post(): Response
+    public function patch(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
