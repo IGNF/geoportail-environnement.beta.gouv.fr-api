@@ -24,7 +24,25 @@ composer install
 DATABASE_URL=postgresql://postgres:root@localhost:5432/foreg
 ```
 
-### Ajouter un jeu de données 
+### Créer la bdd (si non existante)
+
+```cmd
+php bin/console doctrine:database:create
+```
+
+### Mettre à jour le schéma
+
+```cmd
+php bin/console doctrine:migration:migrate
+```
+
+### Générer les clés publiques/privées pour les tokens JWT
+
+```cmd
+php bin/console lexik:jwt:generate-keypair
+```
+
+### Ajouter un jeu de données (local uniquement)
 
 ```cmd
 php bin/console app:populate-fake
@@ -35,7 +53,7 @@ php bin/console app:populate-fake
 1. Login : 
     - ouvrir **dans un nouvel onglet** `localhost/foreg-site/login` pour simuler l'utilisation du SSO GPF 
     - remplir le formulaire (les login/mdp sont écrits)
-    - ça redirige vers /vous-etes-connecté, on enregistre les jetons token et refresh_token dans localstorage
+    - ça redirige vers /vous-etes-connecté, on enregistre les jetons GPE@token et GPE@refresh_token dans localstorage
     - Fermer l'onglet
 2. Foreg-site
     - A la fermeture, récupérer les tokens

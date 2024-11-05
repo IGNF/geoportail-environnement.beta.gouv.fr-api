@@ -25,8 +25,8 @@ const request = new XMLHttpRequest();
 request.open('GET', url);
 request.onload = () => {
     const response = JSON.parse(request.response);
-    localStorage.setItem('token', response.token);
-    localStorage.setItem('refreshToken', response.refresh_token);
+    localStorage.setItem('GPE@token', response.token);
+    localStorage.setItem('GPE@refresh_token', response.refresh_token);
 };
 request.send();
 
