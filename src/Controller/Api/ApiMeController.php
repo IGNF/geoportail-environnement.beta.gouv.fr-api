@@ -30,9 +30,7 @@ class ApiMeController extends ApiAbstractController
             return $this->returnResponse('Not connected', Response::HTTP_UNAUTHORIZED);
         }
 
-        $json = $serializer->serialize($user, 'json', [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d\TH:i:sP',
-        ]);
+        $json = $serializer->serialize($user, 'json');
 
         return new Response($json, Response::HTTP_OK, array(
             'Content-Type' => 'application/json',

@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ForetRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ForetRepository;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 #[ORM\Entity(repositoryClass: ForetRepository::class)]
+#[HasLifecycleCallbacks]
 class Foret
 {
     #[ORM\Id]
@@ -144,5 +146,18 @@ class Foret
         $this->owner = $owner;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->setUpdatedAtValue();
+    }
+
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }
