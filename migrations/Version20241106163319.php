@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241105140901 extends AbstractMigration
+final class Version20241106163319 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,7 +20,10 @@ final class Version20241105140901 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE foret (id INT NOT NULL, owner_id INT NOT NULL, name TEXT NOT NULL, tags JSON NOT NULL, image_url TEXT NOT NULL, area DOUBLE PRECISION NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, parcels JSON NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE SEQUENCE foret_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE refresh_tokens_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE TABLE foret (id INT NOT NULL, owner_id INT NOT NULL, name TEXT NOT NULL, tags JSON NOT NULL, image_url TEXT NOT NULL, area DOUBLE PRECISION NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, parcels JSON NOT NULL, geometry geometry(MULTIPOLYGON, 0) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_AB82045C7E3C61F9 ON foret (owner_id)');
         $this->addSql('COMMENT ON COLUMN foret.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN foret.updated_at IS \'(DC2Type:datetime_immutable)\'');
@@ -52,6 +55,9 @@ final class Version20241105140901 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
+        $this->addSql('DROP SEQUENCE foret_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE refresh_tokens_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE "user_id_seq" CASCADE');
         $this->addSql('ALTER TABLE foret DROP CONSTRAINT FK_AB82045C7E3C61F9');
         $this->addSql('DROP TABLE foret');
         $this->addSql('DROP TABLE refresh_tokens');
