@@ -25,6 +25,7 @@ class ForetNormalizer implements NormalizerInterface
         $data['owner_email'] = $foret->getOwner()->getEmail();
         $data['parcels'] = $foret->getParcels();
         $data['tags'] = $foret->getTags();
+        $data['geometry'] = $foret->getGeometry();
         $data['created_at'] = $foret->getCreatedAt()->format(\DateTimeInterface::W3C);
         $data['updated_at'] = $foret->getUpdatedAt()->format(\DateTimeInterface::W3C);
         

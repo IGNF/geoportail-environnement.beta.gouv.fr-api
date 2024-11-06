@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ForetRepository;
+use Jsor\Doctrine\PostGIS\Types\PostGISType;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 #[ORM\Entity(repositoryClass: ForetRepository::class)]
@@ -40,6 +41,12 @@ class Foret
     #[ORM\ManyToOne(inversedBy: 'forets', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
+
+    #[ORM\Column(
+        type: PostGISType::GEOMETRY,
+        options: ['geometry_type' => 'MULTIPOLYGON'],
+    )]
+    private ?string $geometry = null;
 
     public function __construct()
     {
@@ -159,5 +166,17 @@ class Foret
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function getGeometry(): ?string
+    {
+        return $this->geometry;
+    }
+
+    public function setGeometry(string $geometry): static
+    {
+        $this->geometry = $geometry;
+
+        return $this;
     }
 }

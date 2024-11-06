@@ -76,6 +76,7 @@ class PopulateFakeCommand extends Command
             ->setOwner($user3)
             ->setParcels(['parcel 1', 'parcel 2'])
             ->setTags(['tag1', 'tag2'])
+            ->setGeometry('MULTIPOLYGON (((1 5, 5 5, 5 1, 1 1, 1 5)), ((6 5, 9 1, 6 1, 6 5)))')
         ;
         $this->foretRepository->persist($foret1, true);
         
@@ -86,6 +87,7 @@ class PopulateFakeCommand extends Command
             ->setOwner($user3)
             ->setParcels(['parcel 1', 'parcel 2'])
             ->setTags(['tag1'])
+            ->setGeometry('MULTIPOLYGON (((1 5, 5 5, 5 1, 1 1, 1 5)), ((6 5, 9 1, 6 1, 6 5)))')
         ;
         $this->foretRepository->persist($foret2, true);
         
@@ -96,6 +98,7 @@ class PopulateFakeCommand extends Command
             ->setOwner($user2)
             ->setParcels(['parcel 1', 'parcel 2'])
             ->setTags(['tag1'])
+            ->setGeometry('MULTIPOLYGON (((1 5, 5 5, 5 1, 1 1, 1 5)), ((6 5, 9 1, 6 1, 6 5)))')
         ;
         $this->foretRepository->persist($foret3, true);
         
@@ -106,6 +109,7 @@ class PopulateFakeCommand extends Command
             ->setOwner($user1)
             ->setParcels(['parcel 1', 'parcel 2'])
             ->setTags(['tag1'])
+            ->setGeometry('MULTIPOLYGON (((1 5, 5 5, 5 1, 1 1, 1 5)), ((6 5, 9 1, 6 1, 6 5)))')
         ;
         $this->foretRepository->persist($foret4, true);
 
@@ -116,6 +120,7 @@ class PopulateFakeCommand extends Command
             ->setOwner($user4)
             ->setParcels(['parcel 1', 'parcel 2'])
             ->setTags(['tag1'])
+            ->setGeometry('MULTIPOLYGON (((1 5, 5 5, 5 1, 1 1, 1 5)), ((6 5, 9 1, 6 1, 6 5)))')
         ;
         $this->foretRepository->persist($foret5, true);
 
