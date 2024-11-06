@@ -131,26 +131,32 @@ class ApiForetController extends ApiAbstractController
             return $this->returnResponse('Request body not valid', Response::HTTP_BAD_REQUEST);
         }
 
-        if( !$data->name ){
+        if(!isset($data->name) || !$data->name ){
             return $this->returnResponse('Parameter "name" is required and cannot be empty', Response::HTTP_BAD_REQUEST);
         }
 
-        if( !$data->image_url ){
-            return $this->returnResponse('Parameter "image_url" is required and cannot be empty', Response::HTTP_BAD_REQUEST);
+        if(!isset($data->image_url) || !filter_var($data->image_url, FILTER_VALIDATE_URL) 
+        ){
+            return $this->returnResponse('Parameter "image_url" is required, cannot be empty and must be a valid url', Response::HTTP_BAD_REQUEST);
         }
 
-        if(!$data->area || !intval($data->area)){
+        if(!isset($data->area) || !intval($data->area)){
             return $this->returnResponse('Parameter "area" is required and be an integer > 0', Response::HTTP_BAD_REQUEST);
         }
 
-        if($data->tags && !is_array($data->tags)){
-            return $this->returnResponse('Parameter "tags" must be an array', Response::HTTP_BAD_REQUEST);
+        if(!isset($data->tags) || !is_array($data->tags)){
+            return $this->returnResponse('Parameter "tags" is required and must be an array', Response::HTTP_BAD_REQUEST);
         }
 
-        if($data->parcels && !is_array($data->parcels)){
-            return $this->returnResponse('Parameter "parcels" must be an array', Response::HTTP_BAD_REQUEST);
+        if(!isset($data->parcels) || !is_array($data->parcels)){
+            return $this->returnResponse('Parameter "parcels" is required and must be an array', Response::HTTP_BAD_REQUEST);
         }
 
+        /*regex wkt multipolygone https://stackoverflow.com/questions/75529623/regex-for-multipolygon-wkt */
+        $regex = '/^MULTIPOLYGON\s*\(\(\((-?\d+(?:\.\d+)*\ -?\d+(?:\.\d+)*)(?:,\s*\s*(?1))*\)(?:,\s*\((?1)(?:,\s*\s*(?1))*\))*\)(?:,\s*\(\((?1)(?:,\s*\s*(?1))*\)(?:,\s*\((?1)(?:,\s*\s*(?1))*\))*\))*\)$/';
+        if(!isset($data->geometry) || !preg_match($regex, $data->geometry)  ){
+            return $this->returnResponse('Parameter "geometry" is required and must be WKT : MULTIPOLYGON (((1 5, 5 5, 5 1, 1 1, 1 5)), ((6 5, 9 1, 6 1, 6 5)))', Response::HTTP_BAD_REQUEST);
+        }
     }
 
     private function feedForet(Foret $foret, $data){
@@ -161,6 +167,7 @@ class ApiForetController extends ApiAbstractController
             ->setTags($data->tags ?: [])
             ->setParcels($data->parcels ?: [])
             ->setOwner($this->getUser())
+            ->setGeometry($data->geometry)
         ;
 
         return $foret;
