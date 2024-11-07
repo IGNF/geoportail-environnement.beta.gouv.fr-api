@@ -1,0 +1,43 @@
+services:
+  db_foreg:
+    image: postgis/postgis:16-3.5
+    restart: always
+    ports:
+      - "5580:5432"
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: foreg
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - foreg-networks  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d foreg"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  foreg-api:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    networks:
+      - foreg-networks 
+    depends_on:
+      db_foreg:
+        condition: service_healthy
+  nginx:
+    image: nginx:latest
+    volumes:
+      - .docker/nginx_dev.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "9000:80"
+    networks:
+      - foreg-networks
+    depends_on:
+      - foreg-api
+
+volumes:
+  postgres_data:
+networks:
+  foreg-networks:

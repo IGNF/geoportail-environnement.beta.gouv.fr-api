@@ -47,6 +47,26 @@ php bin/console lexik:jwt:generate-keypair
 ```cmd
 php bin/console app:populate-fake
 ```
+## Installation via Docker compose
+
+``` bash
+docker compose up
+```
+### Pour le DEV 
+
+Ce connecter au conteneur foreg-api et lancer les commandes suivante :
+
+#### Générer les clés publiques/privées pour les tokens JWT
+
+```cmd
+php bin/console lexik:jwt:generate-keypair
+```
+
+#### Ajouter un jeu de données (local uniquement)
+
+```cmd
+php bin/console app:populate-fake
+```
 
 ## Utilisation depuis foreg-site
 
