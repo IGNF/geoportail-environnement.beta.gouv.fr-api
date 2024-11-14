@@ -20,7 +20,7 @@ class ApiMeController extends ApiAbstractController
         $this->userRepository = $userRepository;
     }
     
-    #[Route('/api/me', name: 'app_api_me', methods:["GET"])]
+    #[Route('/me', name: 'app_api_me', methods:["GET"])]
     public function index(SerializerInterface $serializer): Response
     {
         /** @var User $user */

@@ -21,7 +21,7 @@ class SecurityController extends AbstractController
         $this->refreshTokenRepository = $refreshTokenRepository;
     }
 
-    #[Route(path: '/login', name: 'app_login')]
+    #[Route(path: '/login-temporaire', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // get the login error if there is one
@@ -36,7 +36,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/api/login', name: 'api_login')]
+    #[Route(path: '/login', name: 'api_login')]
     public function apiLogin(): Response
     {
         return new Response('ok');
