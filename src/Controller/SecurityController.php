@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\RefreshToken;
 use App\Repository\RefreshTokenRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -71,9 +72,9 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    private function generateRefreshToken($user){
+    private function generateRefreshToken(User $user){
         $refreshToken = new RefreshToken();
-        $refreshToken->setUsername($user->getId());
+        $refreshToken->setUsername($user->getUserIdentifier());
         
         $datetime = new \DateTime();
         $ttl = $this->getParameter('gesdinet_jwt_refresh_token.ttl');
