@@ -20,7 +20,7 @@ class ApiForetController extends ApiAbstractController
         $this->foretRepository = $foretRepository;
     }
 
-    #[Route('/forets', name: 'api_foret_get', methods:["GET"])]
+    #[Route('/api/forets', name: 'api_foret_get', methods:["GET"])]
     public function get(SerializerInterface $serializer): Response
     {
         /** @var User $user */
@@ -37,7 +37,7 @@ class ApiForetController extends ApiAbstractController
         ));
     }
 
-    #[Route('/forets/{id}', name: 'api_foret_getone', methods:["GET"])]
+    #[Route('/api/forets/{id}', name: 'api_foret_getone', methods:["GET"])]
     public function getOne(int $id, SerializerInterface $serializer): Response
     {
         /** @var User $user */
@@ -61,7 +61,7 @@ class ApiForetController extends ApiAbstractController
         ));
     }
 
-    #[Route('/forets', name: 'api_foret_post', methods:["POST"])]
+    #[Route('/api/forets', name: 'api_foret_post', methods:["POST"])]
     public function post(Request $request, SerializerInterface $serializer): Response
     {
         $data = json_decode($request->getContent());
@@ -81,7 +81,7 @@ class ApiForetController extends ApiAbstractController
         ));
     }
 
-    #[Route('/forets/{id}', name: 'api_foret_puth', methods:["PUT"])]
+    #[Route('/api/forets/{id}', name: 'api_foret_puth', methods:["PUT"])]
     public function put(int $id, Request $request, SerializerInterface $serializer): Response
     {
         /** @var Foret $foret */
@@ -110,7 +110,7 @@ class ApiForetController extends ApiAbstractController
         ));
     }
 
-    #[Route('/forets/{id}', name: 'api_foret_delete', methods:["DELETE"])]
+    #[Route('/api/forets/{id}', name: 'api_foret_delete', methods:["DELETE"])]
     public function delete(int $id): Response
     {
         $foret = $this->foretRepository->find($id);
