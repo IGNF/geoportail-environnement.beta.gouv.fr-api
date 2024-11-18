@@ -15,4 +15,10 @@ class ApiController extends AbstractController
             'controller_name' => 'ApiController',
         ]);
     }
+
+    #[Route('/api/test', name: 'api_test')]
+    public function test(): Response
+    {
+        return new Response('ça marche', Response::HTTP_OK);
+    }
 }
