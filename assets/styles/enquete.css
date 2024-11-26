@@ -1,0 +1,15 @@
+.pagebreak{
+    page-break-before: always;
+}
+@page {
+    margin: 100px 50px;
+    background-color: red;
+}
+#header {
+    position: fixed;
+    left: -50px; top: -100px; right: -50px; height: 100px;
+    background-color: orange;
+}
+#content{
+    background-color: lightblue;
+}

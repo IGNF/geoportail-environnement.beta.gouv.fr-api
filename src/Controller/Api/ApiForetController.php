@@ -2,13 +2,18 @@
 
 namespace App\Controller\Api;
 
+use Dompdf\Dompdf;
+use Knp\Snappy\Pdf;
 use App\Entity\Foret;
 use App\Repository\ForetRepository;
+use App\Service\PdfGeneratorService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ApiForetController extends ApiAbstractController
@@ -37,7 +42,7 @@ class ApiForetController extends ApiAbstractController
         ));
     }
 
-    #[Route('/api/forets/{id}', name: 'api_foret_getone', methods:["GET"])]
+    #[Route('/api/forets/{id}', name: 'api_foret_getone', methods:["GET"], requirements: ['id' => '\d+'])]
     public function getOne(int $id, SerializerInterface $serializer): Response
     {
         /** @var User $user */
@@ -59,6 +64,19 @@ class ApiForetController extends ApiAbstractController
         return new Response($json, Response::HTTP_OK, array(
             'Content-Type' => 'application/json',
         ));
+    }
+
+    #[Route('/api/forets/pdf', name: 'api_foret_pdf', methods:["GET"])]
+    public function pdf(Request $request, PdfGeneratorService $pdfGeneratorService): Response
+    {
+        $data = json_decode($request->getContent());
+
+        $html = $this->render('api/foret/enquete.html.twig', [
+            'name' => 'domPdf' //$data->name
+        ]);
+
+        return $pdfGeneratorService->getStreamResponse($html, 'toto.pdf');
+       
     }
 
     #[Route('/api/forets', name: 'api_foret_post', methods:["POST"])]

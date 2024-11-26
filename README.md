@@ -21,7 +21,8 @@ composer install
 ### Mettre à jour .env.local
 
 ```cmd
-DATABASE_URL=postgresql://postgres:root@localhost:5432/foreg
+DATABASE_URL=postgresql://{name}:{password}@{database_ip}:{port (defaut: 5432)}/{database_name}
+JWT_TOKEN_TTL=123 #Durée de vie du token (86400 pour 1 jour, 10 pour 10 secondes si besoin) Défaut 300 (5 min)
 ```
 
 ### Créer la bdd (si non existante)
@@ -42,11 +43,6 @@ php bin/console doctrine:migration:migrate
 php bin/console lexik:jwt:generate-keypair
 ```
 
-### Ajouter un jeu de données (local uniquement)
-
-```cmd
-php bin/console app:populate-fake
-```
 ## Installation via Docker compose
 
 ``` bash
@@ -55,12 +51,6 @@ docker compose up
 ### Pour le DEV 
 
 Ce connecter au conteneur foreg-api et lancer les commandes suivante :
-
-#### Générer les clés publiques/privées pour les tokens JWT
-
-```cmd
-php bin/console lexik:jwt:generate-keypair
-```
 
 #### Ajouter un jeu de données (local uniquement)
 
@@ -80,5 +70,3 @@ php bin/console app:populate-fake
     - Pour les resources non publiques, 
         - ajouter dans le header `header: bearer {token}`
         - Faire au préalable une requête sur /api/token/refresh pour récupérer un token neuf
-
-Note: Pour une utilisation immédiate, les clés publiques/privées utilisées pour l'authentification JWT sont enregistrées en dur, de même que les login/password des utilisateurs
