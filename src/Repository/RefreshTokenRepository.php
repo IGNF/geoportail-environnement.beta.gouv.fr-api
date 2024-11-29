@@ -50,7 +50,7 @@ class RefreshTokenRepository extends ServiceEntityRepository implements RefreshT
     public function removeAllForUser(User $user){
         $qb = $this->createQueryBuilder('r');
         $qb->andWhere('r.username LIKE :username')
-            ->setParameter('username', $user->getId())
+            ->setParameter('username', $user->getEmail())
         ;
 
         $tokens = $qb->getQuery()->getResult();
