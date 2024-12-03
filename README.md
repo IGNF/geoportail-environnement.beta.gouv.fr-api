@@ -58,6 +58,14 @@ Ce connecter au conteneur foreg-api et lancer les commandes suivante :
 php bin/console app:populate-fake
 ```
 
+#### Avant de committer
+
+Builder les assets 
+
+```cmd
+npm run prod
+```
+
 ## Utilisation depuis foreg-site
 
 1. Login : 
