@@ -3,31 +3,33 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-<h1>Connexion à foreg</h1>
-<p>Ce formulaire sera remplacé ultérieurement par celui de la GPF, il sert à simuler son fonctionnement</p>
-<p>Les utilisateurs disponibles : </p>
-<table>
-    <tr>
-        <th>Login</th>
-        <th>Password</th>
-    </tr>
-    <tr>
-        <td>david@ign</td>
-        <td>david</td>
-    </tr>
-    <tr>
-        <td>clement@ign</td>
-        <td>clement</td>
-    </tr>
-    <tr>
-        <td>manu@ign</td>
-        <td>manu</td>
-    </tr>
-    <tr>
-        <td>daniel@ign</td>
-        <td>daniel</td>
-    </tr>
-</table>
+<div class="fr-container">
+
+    <h1>Connexion à foreg</h1>
+    <p>Ce formulaire sera remplacé ultérieurement par celui de la GPF, il sert à simuler son fonctionnement</p>
+    <p>Les utilisateurs disponibles : </p>
+    <table>
+        <tr>
+            <th>Login</th>
+            <th>Password</th>
+        </tr>
+        <tr>
+            <td>david@ign</td>
+            <td>david</td>
+        </tr>
+        <tr>
+            <td>clement@ign</td>
+            <td>clement</td>
+        </tr>
+        <tr>
+            <td>manu@ign</td>
+            <td>manu</td>
+        </tr>
+        <tr>
+            <td>daniel@ign</td>
+            <td>daniel</td>
+        </tr>
+    </table>
     <form method="post">
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -41,10 +43,10 @@
         {% endif %}
 
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-        <label for="username">Email</label>
-        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
-        <label for="password">Password</label>
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
+        <label class="fr-label" for="username">Email</label>
+        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control fr-input" autocomplete="email" required autofocus>
+        <label class="fr-label" for="password">Password</label>
+        <input type="password" name="_password" id="password" class="form-control fr-input" autocomplete="current-password" required>
 
         <input type="hidden" name="_csrf_token"
                value="{{ csrf_token('authenticate') }}"
@@ -60,8 +62,9 @@
             </div>
         #}
 
-        <button class="btn btn-lg btn-primary" type="submit">
+        <button class="fr-btn" type="submit">
             Sign in
         </button>
     </form>
+</div>
 {% endblock %}

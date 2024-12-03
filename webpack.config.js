@@ -53,7 +53,7 @@ module.exports = {
     plugins: [
         new CopyPlugin({
             patterns: [
-                { from: "./assets/styles/enquete.css", to: "./" },
+                { from: "./assets/img", to: "./img" },
                 // { from: "other", to: "public" },
             ],
         }),

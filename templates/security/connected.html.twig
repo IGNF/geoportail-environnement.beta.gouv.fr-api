@@ -1,24 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block breadcrumb %}
+<div class="fr-container">
+    <nav role="navigation" class="fr-breadcrumb" aria-label="vous êtes ici :">
+        <button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d’Ariane</button>
+        <div class="fr-collapse" id="breadcrumb-1">
+            <ol class="fr-breadcrumb__list">
+                <li>
+                    <a class="fr-breadcrumb__link" href="/">Accueil</a>
+                </li>
+                <li>
+                    <a class="fr-breadcrumb__link" aria-current="page">Vous êtes connecté</a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+</div>
+{% endblock %}
 {% block body %}
+<div class="fr-container">
+    <h1>Bienvenue sur Foreg</h1>
 
-<h1>Bienvenue sur Foreg</h1>
-<p>Cette page sera au design DSFR</p>
-<hr>
-{% if app.user %}
-    <p>Bonjour {{ app.user.email }}</p>
-    <p>Vous êtes connecté sur le site foreg, vous pouvez fermer cet onglet</p>
-    <p>{{ app.user|serialize(format = 'json') }}</p>
-{% else %}
-    <p>Vous n'êtes pas connecté</p>
-{% endif %}
-
+    {% if app.user %}
+        <p>Vous êtes connecté en tant que <b>{{ app.user.email }}</b> sur le site foreg</p>
+        <p>Vous pouvez fermer cet onglet et revenir sur l'onglet précédemment actif, ou <a href="/requete/nouvelle">lancer une nouvelle enquête</a> </p>
+    {% else %}
+        <p>Vous n'êtes pas connecté</p>
+    {% endif %}
+</div>
 {% endblock %}
 
 
 {% block javascripts %}
 <script>
-console.error('récupère les tokens jwt et refresh');
 {% if app.user %}
-const compteur = 10;
 const url = "{{ url('app_session_token')}}";
 
 const request = new XMLHttpRequest();
