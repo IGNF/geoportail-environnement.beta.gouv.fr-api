@@ -1,5 +1,21 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+<style>
+#continue{
+    display: none;
+}
+
+body.connected #wait{
+    display: none;
+}
+body.connected #continue{
+    display: block;
+}
+
+</style>
+{% endblock %}
+
 {% block breadcrumb %}
 <div class="fr-container">
     <nav role="navigation" class="fr-breadcrumb" aria-label="vous êtes ici :">
@@ -17,13 +33,15 @@
     </nav>
 </div>
 {% endblock %}
+
 {% block body %}
 <div class="fr-container">
     <h1>Bienvenue sur Foreg</h1>
 
     {% if app.user %}
         <p>Vous êtes connecté en tant que <b>{{ app.user.email }}</b> sur le site foreg</p>
-        <p>Vous pouvez fermer cet onglet et revenir sur l'onglet précédemment actif, ou <a href="/requete/nouvelle">lancer une nouvelle enquête</a> </p>
+        <p id="wait">Patentiez quelques instants...</p>
+        <p id="continue">Vous pouvez fermer cet onglet et revenir sur l'onglet précédemment actif, ou <a href="/requete/nouvelle">lancer une nouvelle enquête</a> </p>
     {% else %}
         <p>Vous n'êtes pas connecté</p>
     {% endif %}
@@ -42,6 +60,7 @@ request.onload = () => {
     const response = JSON.parse(request.response);
     localStorage.setItem('GPE@token', response.token);
     localStorage.setItem('GPE@refresh_token', response.refresh_token);
+    document.body.classList.add('connected')
 };
 request.send();
 
