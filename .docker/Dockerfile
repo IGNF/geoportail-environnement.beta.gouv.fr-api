@@ -11,13 +11,13 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Changer le répertoire de travail
-WORKDIR /app
+WORKDIR /opt/gpe-api
 
 # Installer Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Copier le code Symfony dans le conteneur
-COPY . /app
+COPY . /opt/gpe-api
 COPY .docker/php-fpm-custom.conf /opt/bitnami/php/etc/php-fpm.d/php-fpm-custom.conf
 
 # Installer les dépendances Composer
@@ -27,4 +27,4 @@ RUN COMPOSER_CACHE_READ_ONLY=true composer install --no-interaction
 # Exposer le port 9000 pour PHP-FPM
 EXPOSE 9000
 
-ENTRYPOINT ["/bin/sh", "/app/.docker/init_db.sh"]
+ENTRYPOINT ["/bin/sh", "/opt/gpe-api/.docker/init_db.sh"]
