@@ -15,6 +15,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use OpenApi\Attributes as OA;
 
 class ApiForetController extends ApiAbstractController
 {
@@ -25,6 +26,22 @@ class ApiForetController extends ApiAbstractController
         $this->foretRepository = $foretRepository;
     }
 
+    #[OA\Get(
+        tags: ["Foret"],
+        path: '/api/forets',
+        security: ["bearer"],
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "Forêts de l'utilisateur",
+                content: new OA\JsonContent(
+                    type: "array",
+                    items: new OA\Items(ref: "#/components/schemas/foret_output")
+                )
+            ),
+            new OA\Response(response: 401, ref: "#/components/responses/NotConnected"),
+        ]
+    )]
     #[Route('/api/forets', name: 'api_foret_get', methods:["GET"])]
     public function get(SerializerInterface $serializer): Response
     {
@@ -42,6 +59,24 @@ class ApiForetController extends ApiAbstractController
         ));
     }
 
+    #[OA\Get(
+        tags: ["Foret"],
+        path: '/api/forets/{id}',
+        parameters: [new OA\Parameter(ref: "#/components/parameters/id")],
+        security: ["bearer"],
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "Forêts de l'utilisateur",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/foret_output"
+                )
+            ),
+            new OA\Response(response: 401, ref: "#/components/responses/NotConnected"),
+            new OA\Response(response: 403, ref: "#/components/responses/Forbidden"),
+            new OA\Response(response: 404, ref: "#/components/responses/NotFound"),
+        ]
+    )]
     #[Route('/api/forets/{id}', name: 'api_foret_getone', methods:["GET"], requirements: ['id' => '\d+'])]
     public function getOne(int $id, SerializerInterface $serializer): Response
     {
@@ -65,7 +100,6 @@ class ApiForetController extends ApiAbstractController
             'Content-Type' => 'application/json',
         ));
     }
-
     #[Route('/api/forets/pdf', name: 'api_foret_pdf', methods:["GET"])]
     public function pdf(Request $request, PdfGeneratorService $pdfGeneratorService): Response
     {
@@ -79,6 +113,27 @@ class ApiForetController extends ApiAbstractController
        
     }
 
+    #[OA\Post(
+        tags: ["Foret"],
+        path: '/api/forets',
+        security: ["bearer"],
+        description: "Ajoute une foret'",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: "#/components/schemas/foret_input")
+        ),
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "Forêt de l'utilisateur",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/foret_output"
+                )
+            ),
+            new OA\Response(response: 400, ref: "#/components/responses/BadRequest"),
+            new OA\Response(response: 401, ref: "#/components/responses/NotConnected"),
+        ]
+    )]
     #[Route('/api/forets', name: 'api_foret_post', methods:["POST"])]
     public function post(Request $request, SerializerInterface $serializer): Response
     {
@@ -99,6 +154,30 @@ class ApiForetController extends ApiAbstractController
         ));
     }
 
+    #[OA\Put(
+        tags: ["Foret"],
+        path: '/api/forets/{id}',
+        parameters: [new OA\Parameter(ref: "#/components/parameters/id")],
+        security: ["bearer"],
+        description: "Modifie une foret'",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: "#/components/schemas/foret_input")
+        ),
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "Forêt de l'utilisateur",
+                content: new OA\JsonContent(
+                    ref: "#/components/schemas/foret_output"
+                )
+            ),
+            new OA\Response(response: 400, ref: "#/components/responses/BadRequest"),
+            new OA\Response(response: 401, ref: "#/components/responses/NotConnected"),
+            new OA\Response(response: 403, ref: "#/components/responses/Forbidden"),
+            new OA\Response(response: 404, ref: "#/components/responses/NotFound"),
+        ]
+    )]
     #[Route('/api/forets/{id}', name: 'api_foret_puth', methods:["PUT"])]
     public function put(int $id, Request $request, SerializerInterface $serializer): Response
     {
@@ -128,6 +207,19 @@ class ApiForetController extends ApiAbstractController
         ));
     }
 
+    #[OA\Delete(
+        tags: ["Foret"],
+        path: '/api/forets/{id}',
+        parameters: [new OA\Parameter(ref: "#/components/parameters/id")],
+        security: ["bearer"],
+        description: "Supprime une foret'",
+        responses: [
+            new OA\Response(response: 204, ref: "#/components/responses/Deleted"),
+            new OA\Response(response: 401, ref: "#/components/responses/NotConnected"),
+            new OA\Response(response: 403, ref: "#/components/responses/Forbidden"),
+            new OA\Response(response: 404, ref: "#/components/responses/NotFound"),
+        ]
+    )]
     #[Route('/api/forets/{id}', name: 'api_foret_delete', methods:["DELETE"])]
     public function delete(int $id): Response
     {

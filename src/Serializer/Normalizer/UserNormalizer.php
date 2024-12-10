@@ -5,6 +5,7 @@ namespace App\Serializer\Normalizer;
 use App\Entity\User;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use OpenApi\Attributes as OA;
 
 class UserNormalizer implements NormalizerInterface
 {
@@ -14,6 +15,29 @@ class UserNormalizer implements NormalizerInterface
     ) {
     }
 
+    #[OA\Schema(
+        schema: "user",
+        properties: [
+            new OA\Property(
+                type: "string", 
+                property: "email", 
+                description: "email de l'utilisateur, ne sera jamais modifié",
+                format: "email",
+            ),
+            new OA\Property(
+                type: "string", 
+                property: "created_at", 
+                description: "date de création du compte de l'utilisateur",
+                format: "date-time",
+            ),
+            new OA\Property(
+                type: "string", 
+                property: "last_login", 
+                description: "date de dernière connexion de l'utilisateur",
+                format: "date-time",
+            ),
+        ]
+    )]
     public function normalize($user, ?string $format = null, array $context = []): array
     {
         /** @var User $user */

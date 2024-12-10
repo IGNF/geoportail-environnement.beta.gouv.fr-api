@@ -3,13 +3,10 @@
 namespace App\Controller\Api;
 
 use App\Repository\UserRepository;
-use Symfony\Component\Serializer\Serializer;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ApiMeController extends ApiAbstractController
 {
@@ -21,6 +18,19 @@ class ApiMeController extends ApiAbstractController
     }
     
     #[Route('/api/me', name: 'app_api_me', methods:["GET"])]
+    #[OA\Get(
+        path: '/api/me',
+        tags: ["User"],
+        security: ["bearer"],
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "données de l'utilisateur connecté",
+                content: new OA\JsonContent(ref: "#/components/schemas/user")
+            ),
+            new OA\Response(response: 401, ref: "#/components/responses/NotConnected"),
+        ]
+    )]
     public function index(SerializerInterface $serializer): Response
     {
         /** @var User $user */

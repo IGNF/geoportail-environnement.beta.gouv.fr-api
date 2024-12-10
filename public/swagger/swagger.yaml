@@ -1,0 +1,306 @@
+openapi: 3.0.0
+info:
+  title: "API géoportail de l'environnement"
+  version: '1.0'
+servers:
+  -
+    url: 'https://TODO_PROD.ign.fr/api'
+    description: "Permet l'accès aux données du GPE"
+  -
+    url: 'https://qlf-gpe.ign.fr/api'
+    description: "Permet l'accès aux données du GPE sur serveur qlf"
+  -
+    url: 'https://gpe.mut-dev.ign.fr/api'
+    description: "Permet l'accès aux données du GPE sur serveur mut-dev"
+paths:
+  /api/forets:
+    get:
+      tags:
+        - Foret
+      operationId: c3bec87e558d4d2ab72456587e9957ad
+      responses:
+        '200':
+          description: "Forêts de l'utilisateur"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/foret_output'
+        '401':
+          $ref: '#/components/responses/NotConnected'
+      security:
+        -
+          scalar: bearer
+    post:
+      tags:
+        - Foret
+      description: "Ajoute une foret'"
+      operationId: b41407b2fc67dd06e04074ddcb10fa4d
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/foret_input'
+      responses:
+        '200':
+          description: "Forêt de l'utilisateur"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/foret_output'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotConnected'
+      security:
+        -
+          scalar: bearer
+  '/api/forets/{id}':
+    get:
+      tags:
+        - Foret
+      operationId: beebdcd13e8622c75e4fa5284eb03c16
+      parameters:
+        -
+          $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: "Forêts de l'utilisateur"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/foret_output'
+        '401':
+          $ref: '#/components/responses/NotConnected'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+        -
+          scalar: bearer
+    put:
+      tags:
+        - Foret
+      description: "Modifie une foret'"
+      operationId: 710b828e4e199d02194d87bc6bf81759
+      parameters:
+        -
+          $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/foret_input'
+      responses:
+        '200':
+          description: "Forêt de l'utilisateur"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/foret_output'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotConnected'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+        -
+          scalar: bearer
+    delete:
+      tags:
+        - Foret
+      description: "Supprime une foret'"
+      operationId: f1114c3d1cd2a730b433385a6e4026ae
+      parameters:
+        -
+          $ref: '#/components/parameters/id'
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/NotConnected'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+        -
+          scalar: bearer
+  /api/me:
+    get:
+      tags:
+        - User
+      operationId: 8bb5708cff7c9351381e6a6573abf06c
+      responses:
+        '200':
+          description: "données de l'utilisateur connecté"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '401':
+          $ref: '#/components/responses/NotConnected'
+      security:
+        -
+          scalar: bearer
+components:
+  schemas:
+    foret_input:
+      properties:
+        name:
+          description: 'Nom de la foret'
+          type: string
+        area:
+          description: 'aire de la foret, exprimée en xx'
+          type: number
+        image_url:
+          description: "image d'illustration de la foret"
+          type: string
+          format: uri
+        parcels:
+          description: 'parcelles cadastrales intersectant la foret'
+          type: array
+          items:
+            type: string
+        tags:
+          description: 'tags concernant la foret'
+          type: array
+          items:
+            type: string
+        geometry:
+          description: 'géométrie de la foret'
+          type: string
+      type: object
+    foret_output:
+      type: object
+      allOf:
+        -
+          $ref: '#/components/schemas/foret_input'
+        -
+          properties:
+            owner_email:
+              description: "email de l'utilisateur"
+              type: string
+              format: email
+            id:
+              description: 'Identifiant de la foret'
+              type: integer
+            created_at:
+              description: "date de création du compte de l'utilisateur"
+              type: string
+              format: date-time
+            updated_at:
+              description: "date de création du compte de l'utilisateur"
+              type: string
+              format: date-time
+          type: object
+    user:
+      properties:
+        email:
+          description: "email de l'utilisateur, ne sera jamais modifié"
+          type: string
+          format: email
+        created_at:
+          description: "date de création du compte de l'utilisateur"
+          type: string
+          format: date-time
+        last_login:
+          description: "date de dernière connexion de l'utilisateur"
+          type: string
+          format: date-time
+      type: object
+  responses:
+    Deleted:
+      description: 'La ressource a été supprimée'
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                type: integer
+                example: '204'
+              message:
+                type: string
+                example: 'La ressource a été supprimée'
+            type: object
+    BadRequest:
+      description: "La requête n'est pas correcte"
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                type: integer
+                example: '400'
+              message:
+                type: string
+                example: "La requête n'est pas correcte"
+            type: object
+    NotConnected:
+      description: 'Vous devez être connecté'
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                type: integer
+                example: '401'
+              message:
+                type: string
+                example: 'Vous devez être connecté'
+            type: object
+    Forbidden:
+      description: "Vous n'avez pas accès à cette ressource"
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                type: integer
+                example: '403'
+              message:
+                type: string
+                example: "Vous n'avez pas accès à cette ressource"
+            type: object
+    NotFound:
+      description: "La resource n'existe pas"
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                type: integer
+                example: '404'
+              message:
+                type: string
+                example: "La resource n'existe pas"
+            type: object
+  parameters:
+    id:
+      name: id
+      in: path
+      description: 'Identifiant de la ressource'
+      required: true
+      schema:
+        type: integer
+  securitySchemes:
+    bearer:
+      type: apiKey
+      name: Authorization
+      in: header
+      bearerFormat: JWT
+      scheme: Bearer
+tags:
+  -
+    name: Foret
+    description: Foret
+  -
+    name: User
+    description: User
