@@ -27,4 +27,5 @@ RUN COMPOSER_CACHE_READ_ONLY=true composer install --no-interaction
 # Exposer le port 9000 pour PHP-FPM
 EXPOSE 9000
 
+
 ENTRYPOINT ["/bin/sh", "/opt/gpe-api/.docker/init_db.sh"]
