@@ -1,4 +1,9 @@
+name: Build and Push Docker Image
+
 on:
+  push:
+    tags:
+      - 'v*.*.*' # Se déclenche uniquement pour les tags au format vx.x.x
   workflow_dispatch:
     inputs:
       version:
@@ -18,10 +23,22 @@ jobs:
       packages: write
 
     steps:
-      - name: Validate version input
-        id: validate_version
+      - name: Set version for build
+        id: set_version
         run: |
-          if [[ ! "${{ github.event.inputs.version }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          elif [[ "${{ github.ref_type }}" == "tag" ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            echo "Error: Unsupported event type"
+            exit 1
+          fi
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Validate version format
+        run: |
+          if [[ ! "${VERSION}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Error: Version must follow the format vX.X.X"
             exit 1
           fi
@@ -44,7 +61,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: ${{ github.event.inputs.version }}
+          tags: ${{ env.VERSION }}
 
       - name: Build and push Docker image
         id: build-and-push
