@@ -10,5 +10,7 @@ else
     php bin/console doctrine:migrations:migrate --no-interaction  -e prod
 fi
 
+php bin/console lexik:jwt:generate-keypair --overwrite
+
 # Lancer PHP-FPM en mode foreground
 exec php-fpm -F --pid /opt/bitnami/php/tmp/php-fpm.pid -y /opt/bitnami/php/etc/php-fpm.conf
