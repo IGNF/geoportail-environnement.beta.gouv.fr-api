@@ -52,13 +52,19 @@ docker compose up
 
 Ce connecter au conteneur foreg-api et lancer les commandes suivante :
 
-#### Ajouter un jeu de données (local uniquement)
+#### Ajouter un utilisateur
 
 ```cmd
-php bin/console app:populate-fake
+php bin/console app:user:add
 ```
 
-#### Avant de committer
+#### Authentifier pour tester l'API
+
+Avec l'utilisateur précédemment ajouté via un testeur API ( [insomnia](https://insomnia.rest/) ou [postman](https://www.postman.com/) par exemple )
+
+La doc se trouve à l'url `/api/api`
+
+#### Avant de committer (si nécessaire)
 
 Builder les assets 
 
@@ -66,15 +72,25 @@ Builder les assets
 npm run prod
 ```
 
+Mettre à jour la documentation de l'api
+
+```cmd
+./vendor/bin/openapi --format yaml --output ./public/swagger/swagger.yaml src
+```
+
 ## Utilisation depuis foreg-site
 
 1. Login : 
-    - ouvrir **dans un nouvel onglet** `localhost/foreg-site/login` pour simuler l'utilisation du SSO GPF 
+    - ouvrir **dans un nouvel onglet** `/api/login` (redirige vers SSO GPF) 
     - remplir le formulaire (les login/mdp sont écrits)
-    - ça redirige vers /vous-etes-connecté, on enregistre les jetons GPE@token et GPE@refresh_token dans localstorage
+    - redirige vers /api/vous-etes-connecté, on ajoute/update les jetons `GPE@token` et `GPE@refresh_token` dans localstorage
     - Fermer l'onglet
 2. Foreg-site
-    - A la fermeture, récupérer les tokens
     - Pour les resources non publiques, 
         - ajouter dans le header `header: bearer {token}`
         - Faire au préalable une requête sur /api/token/refresh pour récupérer un token neuf
+    - Déconnexion: 
+        - supprimer les jetons `GPE@token` et `GPE@refresh_token` dans localstorage
+        - rediriger vers /api/logout
+        - SSO GPF demande "Vous êtes sûr ?"
+        - Redirige vers l'accueil

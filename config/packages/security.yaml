@@ -48,14 +48,16 @@ security:
             provider: app_user_provider
             # custom_authenticators:
             #     - App\Security\AppJWTAuthenticator
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                enable_csrf: true
-                default_target_path: app_connected
+            # form_login:
+            #     login_path: security_login
+            #     check_path: security_login
+            #     enable_csrf: true
+            #     default_target_path: app_connected
+            custom_authenticators:
+                - app.keycloak_authenticator
 
             logout:
-                path: app_logout
+                path: security_logout
                 # where to redirect after logout
                 # target: app_any_route
 

@@ -4,6 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    iam_edit_account_url: "%env(resolve:IAM_EDIT_ACCOUNT_URL)%"
+    iam_url: "%env(resolve:IAM_URL)%"
+    iam_client_id: "%env(resolve:IAM_CLIENT_ID)%"
+    iam_client_secret: "%env(resolve:IAM_CLIENT_SECRET)%"
+    iam_post_logout_redirect_uri: "%env(resolve:IAM_POST_LOGOUT_REDIRECT_URI)%"
 
 services:
     # default configuration for services in *this* file
@@ -47,3 +52,6 @@ services:
         - []
         tags:
         - { name: monolog.logger, channel: security }
+
+    app.keycloak_authenticator:
+        class: App\Security\Authenticator\KeycloakAuthenticator

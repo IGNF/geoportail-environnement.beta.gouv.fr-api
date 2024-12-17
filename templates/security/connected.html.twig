@@ -52,7 +52,7 @@ body.connected #continue{
 {% block javascripts %}
 <script>
 {% if app.user %}
-const url = "{{ url('app_session_token')}}";
+const url = "{{ url('security_session_token')}}";
 
 const request = new XMLHttpRequest();
 request.open('GET', url);

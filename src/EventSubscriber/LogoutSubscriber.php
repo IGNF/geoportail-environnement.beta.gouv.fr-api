@@ -10,6 +10,7 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LogoutSubscriber implements EventSubscriberInterface
 {
@@ -35,9 +36,9 @@ class LogoutSubscriber implements EventSubscriberInterface
         if(!$event->getToken()){
             return;
         }
-        $user = $event->getToken()->getUser();
-
+        
         // Supprimer les refresh_tokens de la base
+        $user = $event->getToken()->getUser();
         /** @var RefreshTokenRepository $repository */
         $repository = $this->doctrine->getRepository(RefreshToken::class);
         $repository->removeAllForUser($user);
@@ -45,9 +46,15 @@ class LogoutSubscriber implements EventSubscriberInterface
         // supprimer la session
         $this->requestStack->getSession()->clear();
 
-        // TODO supprimer la connexion SSO GPF
-
-        // la direction par défaut est "/" (sans le préfixe des routes)
+        // supprimer la connexion SSO GPF
+        $keycloakUrl = $this->params->get('iam_url').'/logout';
+        $params = [
+            'client_id' => $this->params->get('iam_client_id'),
+            'post_logout_redirect_uri' => $this->params->get('iam_post_logout_redirect_uri'),
+        ];
+        $url = $keycloakUrl.'?'.http_build_query($params);
+        
+        $event->setResponse(new RedirectResponse($url));
 
     }
 

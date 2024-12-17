@@ -8,6 +8,8 @@ use App\Repository\RefreshTokenRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -21,37 +23,46 @@ class SecurityController extends AbstractController
         $this->refreshTokenRepository = $refreshTokenRepository;
     }
 
-    #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    #[Route(path: '/login', name: 'security_login')]
+    public function login(UrlGeneratorInterface $urlGenerator): Response
     {
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+        $keycloakUrl = $this->getParameter('iam_url').'/auth';
+        $redirectUri = $urlGenerator->generate('security_login_check', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $redirectUri = preg_replace('/^http:/', 'https:', $redirectUri);
 
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+        $params = [
+            'client_id' => $this->getParameter('iam_client_id'),
+            'response_type' => 'code',
+            'scope' => 'openid profile email',
+            'redirect_uri' => $redirectUri,
+            'nonce' => $this->generateUid(),
+        ];
 
-        return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
-        ]);
+        $url = $keycloakUrl.'?'.http_build_query($params);
+
+        return new RedirectResponse($url);
     }
 
-    #[Route(path: '/api/login', name: 'api_login')]
-    public function apiLogin(): Response
+    #[Route(path: '/login/check', name: 'security_login_check')]
+    public function loginCheck()
     {
+        // intercepté par KeycloakAuthenticator
         return new Response('ok');
     }
 
-    #[Route(path: '/vous-etes-connecte', name: 'app_connected')]
+    /*
+     * stocke les jetons JWT dans le localstorage
+     */
+    #[Route(path: '/vous-etes-connecte', name: 'security_connected')]
     public function connected():Response
     {
         return $this->render('security/connected.html.twig');
     }
 
     /**
-     * cette route permet de recevoir les tokens lorsqu'on est connectés sur le site via une session
+     * permet de recevoir les tokens lorsqu'on est connectés sur le site via une session
      */
-    #[Route(path: '/session-token', name: 'app_session_token')]
+    #[Route(path: '/session-token', name: 'security_session_token')]
     public function sessionToken(JWTTokenManagerInterface $jwtManager ): Response
     {
         $user = $this->getUser();
@@ -66,10 +77,34 @@ class SecurityController extends AbstractController
         ));
     }
 
-    #[Route(path: '/logout', name: 'app_logout')]
+    #[Route(path: '/logout', name: 'security_logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    /**
+     * Générer un UID.
+     *
+     * @param int $length
+     *
+     * @return string
+     */
+    public static function generateUid($length = 16)
+    {
+        $randomUid = '';
+
+        for ($i = 0; $i < $length; ++$i) {
+            if (1 == random_int(1, 2)) {
+                // un chiffre entre 0 et 9
+                $randomUid .= chr(random_int(48, 57));
+            } else {
+                // une lettre minuscule entre a et z
+                $randomUid .= chr(random_int(97, 122));
+            }
+        }
+
+        return $randomUid;
     }
 
     private function generateRefreshToken(User $user){

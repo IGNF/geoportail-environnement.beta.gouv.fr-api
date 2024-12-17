@@ -100,6 +100,7 @@ class ApiForetController extends ApiAbstractController
             'Content-Type' => 'application/json',
         ));
     }
+    
     #[Route('/api/forets/pdf', name: 'api_foret_pdf', methods:["GET"])]
     public function pdf(Request $request, PdfGeneratorService $pdfGeneratorService): Response
     {

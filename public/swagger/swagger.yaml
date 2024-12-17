@@ -13,6 +13,79 @@ servers:
     url: 'https://gpe.mut-dev.ign.fr/api'
     description: "Permet l'accès aux données du GPE sur serveur mut-dev"
 paths:
+  /api/login:
+    post:
+      tags:
+        - Login
+      description: "Login via l'API - n'utiliser que pour les développements"
+      operationId: 9127d8373e316ff04968c542f38b27be
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                  example: "email de l'utilisateur (foo@bar.fr)"
+                password:
+                  type: string
+                  example: "password de l'utilisateur"
+              type: object
+      responses:
+        '200':
+          description: "tokens de l'utilisateur"
+          content:
+            application/json:
+              schema:
+                properties:
+                  token: { type: string, example: "JWT token lié à l'utilisateur" }
+                  refresh_token: { type: string, example: "password de l'utilisateur" }
+                type: object
+        '401':
+          description: 'bad credentials'
+          content:
+            application/json:
+              schema:
+                properties:
+                  code: { type: integer, example: '401' }
+                  message: { type: string, example: 'bad credentials' }
+                type: object
+  /api/token/refresh:
+    post:
+      tags:
+        - Login
+      description: 'Redonne un JWT token'
+      operationId: 108d37a64926d5d4423d9f13d7cae486
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                refresh_token:
+                  type: string
+                  example: "refresh_token de l'utilisateur"
+              type: object
+      responses:
+        '200':
+          description: "tokens de l'utilisateur"
+          content:
+            application/json:
+              schema:
+                properties:
+                  token: { type: string, example: "JWT token lié à l'utilisateur" }
+                  refresh_token: { type: string, example: "password de l'utilisateur" }
+                type: object
+        '401':
+          description: 'bad credentials'
+          content:
+            application/json:
+              schema:
+                properties:
+                  code: { type: integer, example: '401' }
+                  message: { type: string, example: 'An authentication exception occurred' }
+                type: object
   /api/forets:
     get:
       tags:
@@ -298,6 +371,9 @@ components:
       bearerFormat: JWT
       scheme: Bearer
 tags:
+  -
+    name: Login
+    description: Login
   -
     name: Foret
     description: Foret

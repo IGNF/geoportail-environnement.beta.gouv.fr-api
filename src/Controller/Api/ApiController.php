@@ -43,4 +43,83 @@ class ApiController extends AbstractController
             []
         );
     }
+
+    #[OA\Post(
+        tags: ["Login"],
+        path: '/api/login',
+        description: "Login via l'API - n'utiliser que pour les développements",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "username", type: "string", example: "email de l'utilisateur (foo@bar.fr)"),
+                    new OA\Property(property: "password", type: "string", example: "password de l'utilisateur")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "tokens de l'utilisateur",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "token", type: "string", example: "JWT token lié à l'utilisateur"),
+                        new OA\Property(property: "refresh_token", type: "string", example: "password de l'utilisateur")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401, 
+                description: "bad credentials",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "code", type: "integer", example: "401"),
+                        new OA\Property(property: "message", type: "string", example: "bad credentials")
+                    ]
+                )
+            )
+        ]
+    )]
+
+    #[OA\Post(
+        tags: ["Login"],
+        path: '/api/token/refresh',
+        description: "Redonne un JWT token",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "refresh_token", type: "string", example: "refresh_token de l'utilisateur")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200, 
+                description: "tokens de l'utilisateur",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "token", type: "string", example: "JWT token lié à l'utilisateur"),
+                        new OA\Property(property: "refresh_token", type: "string", example: "password de l'utilisateur")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401, 
+                description: "bad credentials",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "code", type: "integer", example: "401"),
+                        new OA\Property(property: "message", type: "string", example: "An authentication exception occurred")
+                    ]
+                )
+            )
+        ]
+    )]
+    #[Route(path: '/api/login', name: 'api_login')]
+    public function apiLogin(): Response
+    {
+        // intercepté par JWTAuthenticator, utilisé uniquement en localhost, après avoir généré des users
+        return new Response('ok');
+    }
 }
